@@ -5,13 +5,43 @@ require_once 'Model/Student.php';
 $student_model = new Student();
 
 if (isset($_GET['error'])) $error = htmlspecialchars($_GET['error']);
+$page = (int)($_GET['p'] ?? 1);
+$number_students = $student_model->countAll()->count;
 
 if (isset($_GET['nom']) || isset($_GET['prenom'])) {
-    $students = $student_model->getAllByName($_GET['nom'] ?? '', $_GET['prenom'] ?? '');
-    $alert = count($students) . ' résultat(s) trouvé(s)';
+    $result_count = $student_model->countAllByName($_GET['nom'] ?? '', $_GET['prenom'] ?? '')->count;
+    $total_pages = max(ceil($result_count / 6), 1);
+    // redirection si page inexistante
+    if ($page > $total_pages) {
+        $_GET['p'] = $total_pages;
+        header('location: index.php?' . http_build_query($_GET));
+        die();
+    } else if ($page < 1) {
+        unset($_GET['p']);
+        header('location: index.php?' . http_build_query($_GET));
+        die();
+    }
+
+    $alert = $result_count . ' résultat(s) trouvé(s)';
+    $students = $student_model->getAllByName($_GET['nom'] ?? '', $_GET['prenom'] ?? '', $page);
 } else {
-    $students = $student_model->getAll();
+    $total_pages = ceil($number_students / 6);
+
+    // redirection si page inexistante
+    if ($page > $total_pages) {
+        header('location: index.php?p=' . $total_pages);
+        die();
+    } else if ($page < 1) {
+        header('location: index.php');
+        die();
+    }
+
+    $students = $student_model->getAll($page);
 }
+
+$next = $page + 1;
+$prev = $page - 1;
+unset($_GET['p']);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -24,11 +54,11 @@ if (isset($_GET['nom']) || isset($_GET['prenom'])) {
         <title>ECF Backend 2</title>
     </head>
     <body>
-        <main class="container">
+        <main class="container mb-5">
 
             <section class="p-5 mb-4 mt-4 bg-light rounded-3">
                 <h1>Interface de gestion des élèves et des examens</h1>
-                <h2>Liste des élèves</h2>
+                <h2>Liste des élèves (<?= $number_students ?>)</h2>
             </section>
 
             <header class="py-3 mb-3 border-bottom">
@@ -83,6 +113,17 @@ if (isset($_GET['nom']) || isset($_GET['prenom'])) {
                     </tbody>
                 </table>
             </section>
+
+            <nav>
+                <ul class="pagination justify-content-between">
+                    <li class="page-item <?= $prev > 0 ?: 'disabled' ?>">
+                        <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $prev])) ?>">Précédent</a>
+                    </li>
+                    <li class="page-item <?= $next <= $total_pages ? '' : 'disabled' ?>">
+                        <a class="page-link" href="?<?= http_build_query(array_merge($_GET, ['p' => $next])) ?>">Suivant</a>
+                    </li>
+                </ul>
+            </nav>
 
         </main>
 

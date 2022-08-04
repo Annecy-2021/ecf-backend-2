@@ -3,9 +3,35 @@ require_once 'Connect.php';
 
 class Student extends Connect
 {
-    public function getAll()
+    public function countAll()
     {
-        $req = $this->pdo->query('SELECT e.id_etudiant, prenom, nom, AVG(note) moyenne FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant GROUP BY x.id_etudiant');
+        $req = $this->pdo->query('SELECT COUNT(id_etudiant) `count` FROM etudiants');
+        return $req->fetch();
+    }
+
+    public function countAllByName(string $nom, string $prenom)
+    {
+        $req = $this->pdo->prepare('SELECT COUNT(id_etudiant) `count` FROM etudiants WHERE nom LIKE :nom AND prenom LIKE :prenom');
+        $req->bindValue('nom', $nom . '%');
+        $req->bindValue('prenom', $prenom . '%');
+        $req->execute();
+        return $req->fetch();
+    }
+
+    public function getAll(int $page)
+    {
+        $offset = ($page - 1) * 6;
+        $req = $this->pdo->prepare('
+            SELECT e.id_etudiant, prenom, nom, AVG(note) moyenne
+            FROM etudiants e
+            INNER JOIN examens x
+            ON x.id_etudiant = e.id_etudiant
+            GROUP BY x.id_etudiant
+            LIMIT 6
+            OFFSET :offset
+        ');
+        $req->bindParam('offset', $offset, PDO::PARAM_INT);
+        $req->execute();
         return $req->fetchAll();
     }
 
@@ -17,11 +43,22 @@ class Student extends Connect
         return $req->fetch();
     }
 
-    public function getAllByName(string $nom, string $prenom)
+    public function getAllByName(string $nom, string $prenom, int $page)
     {
-        $req = $this->pdo->prepare("SELECT e.id_etudiant, prenom, nom, AVG(note) moyenne FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant WHERE nom LIKE :nom AND prenom LIKE :prenom GROUP BY x.id_etudiant");
+        $offset = ($page - 1) * 6;
+        $req = $this->pdo->prepare('
+            SELECT e.id_etudiant, prenom, nom, AVG(note) moyenne
+            FROM etudiants e 
+            INNER JOIN examens x
+            ON x.id_etudiant = e.id_etudiant
+            WHERE nom LIKE :nom AND prenom LIKE :prenom
+            GROUP BY x.id_etudiant
+            LIMIT 6
+            OFFSET :offset
+        ');
         $req->bindValue('nom', $nom . '%');
         $req->bindValue('prenom', $prenom . '%');
+        $req->bindParam('offset', $offset, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll();
     }
