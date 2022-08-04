@@ -27,13 +27,21 @@ class Examen extends Connect
     public function create(int $id_etudiant, int $id_examen, string $matiere, float $note)
     {
         $note = (string)$note;
-        $req = $this->pdo->prepare('INSERT INTO examens (id_examen, id_etudiant, matiere, note)
-            VALUES (:id_exa, :id_etu, :matiere, :note)
-        ');
+        $req = $this->pdo->prepare(
+            'INSERT INTO examens (id_examen, id_etudiant, matiere, note)
+            VALUES (:id_exa, :id_etu, :matiere, :note)'
+        );
         $req->bindParam('id_exa', $id_examen, PDO::PARAM_INT);
         $req->bindParam('id_etu', $id_etudiant, PDO::PARAM_INT);
         $req->bindParam('matiere', $matiere);
         $req->bindParam('note', $note);
+        return $req->execute();
+    }
+
+    public function delete(int $id)
+    {
+        $req = $this->pdo->prepare('DELETE FROM examens WHERE id = :id');
+        $req->bindParam('id', $id, PDO::PARAM_INT);
         return $req->execute();
     }
 }

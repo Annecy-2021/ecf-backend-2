@@ -11,7 +11,7 @@ $student = $student_model->getOne((int)$_GET['s']);
 if (!$student) {
     $error = 'Erreur : Aucun étudiant trouvé.';
 }
-$examens = [
+$examens = [ // Je les ai écris en brut comme il n'y avait pas de table pour les examens dans la bdd
     1 => 'Espagnol',
     2 => 'Anglais',
     3 => 'Français',
