@@ -1,5 +1,4 @@
 <?php
-
 require_once 'Connect.php';
 
 class Student extends Connect
@@ -25,6 +24,15 @@ class Student extends Connect
         $req->bindValue('prenom', $prenom . '%');
         $req->execute();
         return $req->fetchAll();
+    }
+
+    public function update(int $id, string $nom, string $prenom): bool
+    {
+        $req = $this->pdo->prepare('UPDATE etudiants SET prenom = :prenom, nom = :nom WHERE id_etudiant = :id');
+        $req->bindParam('prenom', $prenom, PDO::PARAM_STR);
+        $req->bindParam('nom', $nom, PDO::PARAM_STR);
+        $req->bindParam('id', $id, PDO::PARAM_INT);
+        return $req->execute();
     }
 
     public function getNotes(int $id)

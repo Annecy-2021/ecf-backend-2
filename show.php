@@ -1,5 +1,4 @@
 <?php
-
 if (!isset($_GET['s'])) {
     header('location: index.php');
     die();
@@ -62,8 +61,27 @@ if (!$student) {
                 <article class="card">
                     <h5 class="card-header">#<?= $student->id_etudiant ?></h5>
                     <div class="card-body">
-                        <h5 class="card-title"><?= $student->prenom . ' ' . $student->nom ?></h5>
-                        <p class="card-text">Moyenne générale : <strong><?= $student->moyenne ?>/20</strong></p>
+                        <div class="row mb-4">
+                            <div class="col">
+                                <form action="student_edit.php" method="POST" class="row">
+                                    <div class="col">
+                                        <div class="mb-3 input-group">
+                                            <label for="prenom" class="input-group-text">Prénom :</label>
+                                            <input type="text" class="form-control" id="prenom" name="prenom" value="<?= $student->prenom ?>">
+                                        </div>
+                                        <div class="mb-3 input-group">
+                                            <label for="nom" class="input-group-text">Nom :</label>
+                                            <input type="text" class="form-control" id="nom" name="nom" value="<?= $student->nom ?>">
+                                        </div>
+                                        <input type="hidden" value="<?=$student->id_etudiant ?>" name="id_etudiant">
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary">Modifier le nom</button>
+                                    </div>
+                                </form>
+                                <p class="card-text">Moyenne générale : <strong><?= $student->moyenne ?>/20</strong></p>
+                            </div>
+                        </div>
 
                         <div class="accordion" id="accordion">
                             <div class="accordion-item">
