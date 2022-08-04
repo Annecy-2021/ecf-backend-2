@@ -5,8 +5,8 @@ if (!isset($_GET['s'])) {
 }
 
 require_once 'Model/Student.php';
-
 $student_model = new Student();
+
 $student = $student_model->getOne((int)$_GET['s']);
 if (!$student) {
     $error = 'Erreur : Aucun étudiant trouvé.';
@@ -20,7 +20,6 @@ $examens = [ // Je les ai écris en brut comme il n'y avait pas de table pour le
     45 => 'Histoire-Geographie',
     87 => 'Mathématiques'
 ];
-
 $notes = [];
 ?>
 <!DOCTYPE html>
@@ -70,7 +69,10 @@ $notes = [];
 
             <section>
                 <article class="card">
-                    <h5 class="card-header">#<?= $student->id_etudiant ?></h5>
+                    <div class="card-header d-flex justify-space-between">
+                        <h5 class="col">#<?= $student->id_etudiant ?></h5>
+                        <a class="col-auto text-danger" href="student_remove.php?s=<?= $student->id_etudiant ?>">Supprimer l'élève</a>
+                    </div>
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col">

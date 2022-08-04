@@ -55,4 +55,11 @@ class Student extends Connect
         $req->execute();
         return $req->fetchAll();
     }
+
+    public function delete(int $id)
+    {
+        $req = $this->pdo->prepare('DELETE e, x FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant WHERE e.id_etudiant = :id');
+        $req->bindParam('id', $id, PDO::PARAM_INT);
+        return $req->execute();
+    }
 }

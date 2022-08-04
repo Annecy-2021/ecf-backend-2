@@ -8,7 +8,7 @@ if (!isset($_GET['e'])) {
 require_once 'Model/Examen.php';
 $exam_model = new Examen();
 
-$exam = $exam_model->getOne($_GET['e']);
+$exam = $exam_model->getOne((int)$_GET['e']);
 if (!$exam) {
     header('location: index.php?error=Erreur : Aucun examen trouvé.');
     die();
