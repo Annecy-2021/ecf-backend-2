@@ -11,6 +11,17 @@ $student = $student_model->getOne((int)$_GET['s']);
 if (!$student) {
     $error = 'Erreur : Aucun étudiant trouvé.';
 }
+$examens = [
+    1 => 'Espagnol',
+    2 => 'Anglais',
+    3 => 'Français',
+    4 => 'EPS',
+    5 => 'Physique-Chimie',
+    45 => 'Histoire-Geographie',
+    87 => 'Mathématiques'
+];
+
+$notes = [];
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -25,12 +36,12 @@ if (!$student) {
     <body>
         <main class="container">
 
-            <section class="p-5 mb-4 bg-light rounded-3">
+            <section class="p-5 mb-4 mt-4 bg-light rounded-3">
                 <h1>Interface de gestion des élèves et des examens</h1>
                 <?php if (!isset($error)): ?>
                     <h2>Page de l'élève : <?= $student->prenom . ' ' . $student->nom ?></h2>
                 <?php else: ?>
-                        <p>Erreur : Aucun étudiant trouvé.</p>
+                    <p><?= $error ?></p>
                 <?php endif; ?>
                 <a href="index.php">Retour</a>
             </section>
@@ -46,7 +57,7 @@ if (!$student) {
                         <div class="col">
                             <input type="search" class="form-control" placeholder="Prénom" name="prenom">
                         </div>
-                        <button class="btn btn-primary col" type="submit">Rechercher</button>
+                        <button class="btn btn-primary col" type="submit">Rechercher un élève</button>
                     </form>
                 </div>
             </header>
@@ -92,29 +103,51 @@ if (!$student) {
                                 </h2>
                                 <div id="examens" class="accordion-collapse collapse show" data-bs-parent="#accordion">
                                     <div class="accordion-body">
-                                        <table class="table table-striped table-hover">
+                                        <table class="table table-striped table-hover mb-4">
                                             <thead>
                                                 <tr>
                                                     <th scope="col">#</th>
                                                     <th scope="col">Matière</th>
                                                     <th scope="col">Note</th>
-                                                    <th scope="col"><a href="#">Ajouter une nouvelle note</a></th>
+                                                    <th scope="col"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <?php foreach ($student_model->getNotes($student->id_etudiant) as $note): ?>
+                                                <?php foreach ($student_model->getNotes($student->id_etudiant) as $note):
+                                                        $notes[] = $note->id_examen; ?>
                                                     <tr>
                                                         <th scope="row"><?= $note->id_examen ?></th>
                                                         <td><?= $note->matiere ?></td>
                                                         <td><?= $note->note ?></td>
                                                         <td>
-                                                            <a href="#">Modifier</a>
-                                                            <a class="text-danger" href="#">Supprimer</a>
+                                                            <a href="exam_edit.php?e=<?= $note->id ?>">Modifier</a>
+                                                            <a class="text-danger" href="exam_remove.php?e=<?= $note->id ?>">Supprimer</a>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>
                                             </tbody>
                                         </table>
+                                        <h5>Ajouter une note</h5>
+                                        <form action="exam_create.php" class="row" method="POST">
+                                            <div class="mb-3 input-group col">
+                                                <label class="input-group-text" for="examen">Examen :</label>
+                                                <select name="examen" id="examen" class="form-select">
+                                                    <?php foreach ($examens as $id => $matiere): ?>
+                                                        <option value="<?= $matiere . '#' . $id ?>" <?= in_array($id, $notes) ? 'disabled' : '' ?>>
+                                                            <?= $matiere ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3 input-group col">
+                                                <label class="input-group-text" for="note">Note :</label>
+                                                <input type="text" class="form-control" name="note" id="note">
+                                            </div>
+                                            <div class="col">
+                                                <input type="hidden" class="form-control" name="id_etudiant" value="<?= $student->id_etudiant ?>">
+                                                <button type="submit" class="btn btn-primary">Ajouter la note</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

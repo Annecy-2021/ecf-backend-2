@@ -29,15 +29,15 @@ class Student extends Connect
     public function update(int $id, string $nom, string $prenom): bool
     {
         $req = $this->pdo->prepare('UPDATE etudiants SET prenom = :prenom, nom = :nom WHERE id_etudiant = :id');
-        $req->bindParam('prenom', $prenom, PDO::PARAM_STR);
-        $req->bindParam('nom', $nom, PDO::PARAM_STR);
+        $req->bindParam('prenom', $prenom);
+        $req->bindParam('nom', $nom);
         $req->bindParam('id', $id, PDO::PARAM_INT);
         return $req->execute();
     }
 
     public function getNotes(int $id)
     {
-        $req = $this->pdo->prepare('SELECT id_examen, matiere, note FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant WHERE e.id_etudiant = :id');
+        $req = $this->pdo->prepare('SELECT x.id, id_examen, matiere, note FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant WHERE e.id_etudiant = :id');
         $req->bindParam('id', $id, PDO::PARAM_INT);
         $req->execute();
         return $req->fetchAll();
@@ -48,7 +48,7 @@ class Student extends Connect
         $req = $this->pdo->prepare('
             SELECT matiere, AVG(note) moyenne, (SELECT AVG(note) FROM examens e WHERE e.matiere = x.matiere) moyenne_g
             FROM examens x
-            WHERE x.id_etudiant = 1
+            WHERE x.id_etudiant = :id
             GROUP BY matiere
         ');
         $req->bindParam('id', $id, PDO::PARAM_INT);
@@ -56,7 +56,3 @@ class Student extends Connect
         return $req->fetchAll();
     }
 }
-
-
-
-//SELECT id_examen, matiere, note FROM etudiants e INNER JOIN examens x ON x.id_etudiant = e.id_etudiant WHERE e.id_etudiant = 1

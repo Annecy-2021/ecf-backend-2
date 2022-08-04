@@ -4,6 +4,8 @@ require_once 'Model/Student.php';
 
 $student_model = new Student();
 
+if (isset($_GET['error'])) $error = htmlspecialchars($_GET['error']);
+
 if (isset($_GET['nom']) || isset($_GET['prenom'])) {
     $students = $student_model->getAllByName($_GET['nom'] ?? '', $_GET['prenom'] ?? '');
     $alert = count($students) . ' résultat(s) trouvé(s)';
@@ -24,7 +26,7 @@ if (isset($_GET['nom']) || isset($_GET['prenom'])) {
     <body>
         <main class="container">
 
-            <section class="p-5 mb-4 bg-light rounded-3">
+            <section class="p-5 mb-4 mt-4 bg-light rounded-3">
                 <h1>Interface de gestion des élèves et des examens</h1>
                 <h2>Liste des élèves</h2>
             </section>
@@ -40,10 +42,16 @@ if (isset($_GET['nom']) || isset($_GET['prenom'])) {
                         <div class="col">
                             <input type="search" class="form-control" placeholder="Prénom" name="prenom">
                         </div>
-                        <button class="btn btn-primary col" type="submit">Rechercher</button>
+                        <button class="btn btn-primary col" type="submit">Rechercher un élève</button>
                     </form>
                 </div>
             </header>
+
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= $error ?>
+                </div>
+            <?php endif; ?>
 
             <?php if (isset($alert)): ?>
                 <div class="alert alert-primary" role="alert">
