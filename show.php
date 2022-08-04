@@ -92,7 +92,7 @@ $notes = [];
                                         <button type="submit" class="btn btn-primary">Modifier le nom</button>
                                     </div>
                                 </form>
-                                <p class="card-text">Moyenne générale : <strong><?= $student->moyenne ?>/20</strong></p>
+                                <p class="card-text">Moyenne générale : <strong><?= number_format($student->moyenne, 2) ?>/20</strong></p>
                             </div>
                         </div>
 
@@ -173,7 +173,7 @@ $notes = [];
                                                 <?php foreach ($student_model->getMoyennes($student->id_etudiant) as $moyenne): ?>
                                                     <tr>
                                                         <th scope="row"><?= $moyenne->matiere ?></th>
-                                                        <td><?= $moyenne->moyenne ?></td>
+                                                        <td><?= number_format($moyenne->moyenne, 2) ?></td>
                                                         <td><?= number_format($moyenne->moyenne_g, 2) ?></td>
                                                     </tr>
                                                 <?php endforeach; ?>

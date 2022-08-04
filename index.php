@@ -96,7 +96,7 @@ unset($_GET['p']);
                             <th scope="col">#</th>
                             <th scope="col">Prénom</th>
                             <th scope="col">Nom</th>
-                            <th scope="col">Moyenne générale</th>
+                            <th scope="col">Moyenne générale (sur 20)</th>
                             <th scope="col">Détails</th>
                         </tr>
                     </thead>
@@ -106,7 +106,7 @@ unset($_GET['p']);
                                 <th scope="row"><?= $student->id_etudiant ?></th>
                                 <td><?= $student->prenom ?></td>
                                 <td><?= $student->nom ?></td>
-                                <td><?= $student->moyenne ?></td>
+                                <td><?= number_format($student->moyenne, 2) ?></td>
                                 <td><a href="show.php?s=<?= $student->id_etudiant ?>">Voir</a></td>
                             </tr>
                         <?php endforeach; ?>
